@@ -1,9 +1,9 @@
 """
     This program sends a message to a queue on the RabbitMQ server.
-    Make tasks harder/longer-running by adding dots at the end of the message.
+    It simulates reading the temperatures of food in a smoker and sends messages regarding those readings.
 
     Author: Matt Goeckel
-    Date: 1 February 2023
+    Date: 10 February 2023
 
 """
 import csv
@@ -95,4 +95,4 @@ if __name__ == "__main__":
         print (f"Sent temps for time {TimeUTC}.")
 
         # sleep for a few seconds
-        time.sleep(5)
+        time.sleep(30)
