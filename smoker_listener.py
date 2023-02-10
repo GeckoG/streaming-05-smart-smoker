@@ -1,9 +1,10 @@
 """
-    This program listens for work messages contiously. 
-    Start multiple versions to add more workers.  
+    This program listens for messages sent from the smart_smoker.py. 
+    Messages received will include temperatures for a smoker and two foods inside.
+    While listening, it will raise alerts if the smoker or food temperatures reach predetermined fluctuations.
 
     Author: Matt Goeckel
-    Date: 1 February 2023
+    Date: 11 February 2023
 
 """
 
