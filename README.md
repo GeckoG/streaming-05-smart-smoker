@@ -9,4 +9,4 @@ When the program starts, it will declare queues for the smoker, food 1, and food
 Once it declares the queues, it reads the temperatures from the csv, and sends each of the 3 temps to its own queue to await reception by a receiver.
 
 # Screenshot of Program Running
-![img](screenshot.PNG)
+![img](screenshot.JPG)
