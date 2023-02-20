@@ -33,8 +33,8 @@ Our thermometer records three temperatures every thirty seconds (two readings ev
 ## Significant Events
 Condition to monitor/we want to know if:
 
-If smoker temp decreases by 15 F or more in 2.5 min (or 5 readings)  --> smoker alert!
-If food temp change in temp is 1 F or less in 10 min (or 20 readings)  --> food stall alert!
+- If smoker temp decreases by 15 F or more in 2.5 min (or 5 readings)  --> smoker alert!
+- If food temp change in temp is 1 F or less in 10 min (or 20 readings)  --> food stall alert!
 
 # Screenshot of Program Running
 ![img](allworking.PNG)
