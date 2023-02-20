@@ -14,7 +14,7 @@ The receiver will take the temperatures it is sent, and check if foods or the sm
 2. Run smoker_listener.py (This should be done first if all readings are to be processed)
 3. Run smart_smoker.py
 
-## Using a Barbeque Smoker
+# Using a Barbeque Smoker
 When running a barbeque smoker, we monitor the temperatures of the smoker and the food to ensure everything turns out tasty. Over long cooks, the following events can happen:
 
 1. The smoker temperature can suddenly decline.
