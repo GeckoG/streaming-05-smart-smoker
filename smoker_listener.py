@@ -28,90 +28,97 @@ def delete_queue(host: str, queue_name: str):
 def smoker_callback(ch, method, properties, body):
     message = body.decode()
     # decode the binary message body to a string
-    print(f" [x] Smoker Received {message}")
+    #print(f" [x] Smoker Received {message}")           #DEBUG TOOL
     # now it can be deleted from the queue. We have received it and stored the message in a variable
     ch.basic_ack(delivery_tag=method.delivery_tag)
     # discard the date/time and add the number to the deque
+    cur_smoker_temp = message[20:-1]
     if cur_smoker_temp == '':
-        print("No Smoker Temp Reading")
+        #print("No Smoker Temp Reading")
+        pass
     else:
-        cur_smoker_temp = float(message[20:-1])
+        cur_smoker_temp = float(cur_smoker_temp)
         smoker_deque.append(cur_smoker_temp)
 
-    # if 2.5 minutes have not passed, do not worry about checking temperatures yet
-    if len(smoker_deque) == 5:
-        # look through all smoker temps in the last 2.5 minutes
-        # We check it against each of the last 5 readings, so that even if the change was 15deg in the last 30 seconds, we'll know immediately instead of 2 minutes from now
-        i=0
-        while i < 4:
-            # identify the current smoker temp from the deque
-            cur_temp = smoker_deque[4]
-            # discard the date/time and convert from string to float number
-            # now identify the previous temp
-            prev_temp = smoker_deque[i]
+        # if 2.5 minutes have not passed, do not worry about checking temperatures yet
+        if len(smoker_deque) == 5:
+            # look through all smoker temps in the last 2.5 minutes
+            # We check it against each of the last 5 readings, so that even if the change was 15deg in the last 30 seconds, we'll know immediately instead of 2 minutes from now
+            i=0
+            while i < 4:
+                # identify the current smoker temp from the deque
+                cur_temp = smoker_deque[4]
+                # discard the date/time and convert from string to float number
+                # now identify the previous temp
+                prev_temp = smoker_deque[i]
+                i = i+1
+                # compare the temps. If it has decreased by over 15, print an alert
+                if (prev_temp - cur_temp) > 15.0:
+                    print("Smoker Alert: The smoker has decreased by more than 15 degrees in the last 2.5 minutes")
+                    print(f" Timestamp: {message}")
+                    # clear the deque so we don't have multiple alerts in a row
+                    smoker_deque.clear()
+                    #set i = 5 to break the loop so we don't get a deque index out of range error
+                    i = 5
 
-            # compare the temps. If it has decreased by over 15, print an alert
-            if (cur_temp - prev_temp) > 15.0:
-                print("Smoker Alert: The smoker has decreased by more than 15 degrees in the last 2.5 minutes")
-            i = i+1
 
 
 def food1_callback(ch, method, properties, body):
     message = body.decode()
     # decode the binary message body to a string
-    print(f" [x] Food1 Received {message}")
+    #print(f" [x] Food1 Received {message}")            #DEBUG TOOL
     # now it can be deleted from the queue. We have received it and stored the message in a variable
     ch.basic_ack(delivery_tag=method.delivery_tag)
     # discard the date/time and add the number to the deque
     cur_food1_temp = message[20:-1]
     if cur_food1_temp == "":
-        print("Food1 Slot is Empty")
+        #print("Food1 Slot is Empty")                   #DEBUG TOOL
+        pass
     else:
-        cur_food1_temp = str(cur_food1_temp)
+        cur_food1_temp = float(cur_food1_temp)
         food1_deque.append(cur_food1_temp)
 
-    if len(food1_deque) == 20:
-        # identify the current smoker temp from the deque
-        cur_temp = food1_deque[19]      
-        # now identify the previous temp
-        prev_temp = food1_deque[0]
-        # check food 1's current temperature vs 10 minutes ago
-        # if it is less than 1 degree, the loop will execute
-        if (prev_temp - cur_temp) < 1.0:
-        # check again, this time asking if the difference is negative, meaning the temp has decreased
-            if (cur_temp - prev_temp) < 0:
-                print("Food Stall: Food 1 has decreased in temperature over the last 10 minutes")                # now we know the temp has increased by just a small margin, that needs an alert, too
-            else:
-                print("Food Stall: Food 1 has increased by less than 1 degree over the last 10 minutes")
-            
+        # if 10 minutes have not passed since the food was added, don't worry about checking temps yet
+        if len(food1_deque) == 20:
+            # identify the current smoker temp from the deque
+            cur_temp = food1_deque[19]      
+            # now identify the previous temp
+            prev_temp = food1_deque[0]
+            # check food 1's current temperature vs 10 minutes ago
+            # if it dropped by more than 1 degree, the loop will execute
+            if (cur_temp - prev_temp) < -1:
+                print("Food Stall: Food 1 has decreased by more than 1 degree over the last 10 minutes")
+                print(f" Timestamp: {message}")
+                # clear the deque so we don't have multiple alerts in a row
+                food1_deque.clear()           
 
 def food2_callback(ch, method, properties, body):
     message = body.decode()
     # decode the binary message body to a string
-    print(f" [x] Food2 Received {message}")
+    # print(f" [x] Food2 Received {message}")       #DEBUG TOOL
     # now it can be deleted from the queue. We have received it and stored the message in a variable
     ch.basic_ack(delivery_tag=method.delivery_tag)
     # discard the date/time and add the number to the deque
     cur_food2_temp = message[20:-1]
     if cur_food2_temp == "":
-        print("Food2 Slot is Empty")
+        #print("Food2 Slot is Empty")               #DEBUG TOOL
+        pass
     else:
-        cur_food2_temp = str(cur_food2_temp)
-        food1_deque.append(cur_food2_temp)
+        cur_food2_temp = float(cur_food2_temp)
+        food2_deque.append(cur_food2_temp)
     
-    if len(food2_deque) == 20:
-        # identify the current & previous smoker temp from the deque
-        cur_temp = food2_deque[19]
-        prev_temp = food2_deque[0]
-        # check food 2's current temperature vs 10 minutes ago
-        # if it is less than 1 degree, the loop will execute
-        if (cur_temp - prev_temp) < 1.0:
-        # check again, this time asking if the difference is negative, meaning the temp has decreased
+        if len(food2_deque) == 20:
+            # identify the current & previous smoker temp from the deque
+            cur_temp = food2_deque[19]
+            prev_temp = food2_deque[0]
+            # check food 2's current temperature vs 10 minutes ago
+            # if it is less than 1 degree, the loop will execute
+            # if it dropped by more than 1 degree, the loop will execute
             if (cur_temp - prev_temp) < 0:
-                print("Food Stall: Food 2 has decreased in temperature over the last 10 minutes")
-            # now we know the temp has increased by just a small margin, that needs an alert, too
-            else:
-                print("Food Stall: Food 2 has increased by less than 1 degree over the last 10 minutes")
+                print("Food Stall: Food 2 has decreased by more than 1 degree over the last 10 minutes")
+                print(f" Timestamp: {message}")
+                # clear the deque so we don't have multiple alerts in a row
+                food2_deque.clear()               
 
 
 # define a main function to run the program
@@ -154,6 +161,9 @@ def main(hn: str = "localhost", q1: str = "smoker", q2: str = "food1", q3: str =
 
         # print a message to the console for the user
         print(" [*] Ready to receive temps. To exit press CTRL+C")
+        #print(smoker_deque) #DEBUG TOOLS
+        #print(food1_deque)
+        #print(food2_deque)
 
         # start consuming messages via the communication channel
         channel.start_consuming()
