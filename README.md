@@ -37,4 +37,4 @@ Condition to monitor/we want to know if:
 - If food temp change in temp is 1 F or less in 10 min (or 20 readings)  --> food stall alert!
 
 # Screenshot of Program Running
-![img](allworking.PNG)
+![img](allworking2.PNG)
